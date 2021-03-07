@@ -1,0 +1,38 @@
+service: email-api
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  #where you want to deploy this:
+  profile: serverlessEmailUser
+  region: us-west-1
+
+  # Permissions
+  iam.role.statements:
+    - Effect: Allow
+      Action: # array of things you want Lambda to do 
+          - ses: '*' 
+      Resource: '*'
+
+functions:
+  hello:
+    handler: handler.hello 
+    events: 
+      - http: #set up an api gateway
+          path: hello-test
+          method: GET
+          cors: true
+  sendEmail: 
+    handler: sendEmail.handler
+    events: 
+      - http:
+          path: send-email
+          method: post
+          cors: true #to be able to access to another url
+  authorizer:
+    handler: authorizer.handler
+  
+      
